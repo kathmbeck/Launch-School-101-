@@ -9,11 +9,11 @@ end
 
 def integer?(number)
   number.to_i.to_s == number
-end 
+end
 
 def float?(number)
   number.to_f.to_s == number
-end 
+end
 
 def valid_number?(number)
   integer?(number) || float?(number)
@@ -21,19 +21,19 @@ end
 
 def valid_loan?(loan_amount)
   valid_number?(loan_amount) && loan_amount.to_f > 0
-end  
+end
 
 def valid_apr?(apr)
-  valid_number?(apr) && apr.to_f > 0 
-end 
+  valid_number?(apr) && apr.to_f > 0
+end
 
 def valid_duration?(duration)
   integer?(duration) && duration.to_i > 0
 end
 
 def calculate_monthly_interest_rate(apr)
-  apr.to_f/1200 
-end 
+  apr.to_f / 1200
+end
 
 def calculate_months(years)
   years.to_i * 12
@@ -41,72 +41,70 @@ end
 
 def retrieve_loan_amount
   loan_amount = ''
-  loop do 
+  loop do
     prompt('obtain_amount')
-    loan_amount = gets.chomp.delete('$' ',') 
+    loan_amount = gets.chomp.delete('$').delete(',')
     break if valid_loan?(loan_amount)
     prompt('invalid_loan_amount')
   end
-  loan_amount 
-end 
+  loan_amount
+end
 
 def retrieve_apr
   apr = ''
-  loop do 
+  loop do
     prompt('obtain_apr')
     apr = gets.chomp.delete('%')
     break if valid_apr?(apr)
     prompt('invalid_apr')
-  end 
+  end
   apr
-end 
+end
 
 def retrieve_years
   years = ''
-  loop do 
+  loop do
     prompt('obtain_duration')
     years = gets.chomp
     break if valid_duration?(years)
-    prompt('invalid_duration') 
+    prompt('invalid_duration')
   end
-  years  
-end 
+  years
+end
 
 def calculate_monthly_payment(loan_amount, apr, years)
   loan_amount = loan_amount.to_f
   monthly_interest_rate = calculate_monthly_interest_rate(apr)
   months = calculate_months(years)
-  (loan_amount * (monthly_interest_rate / (1 - (1 + monthly_interest_rate)**(-months)))).round(2).to_s
-end  
+  divisor = (1 - (1 + monthly_interest_rate)**-months)
+  loan_amount * (monthly_interest_rate / divisor).round(2)
+end
 
-def retrieve_new_calc? 
+def retrieve_new_calc?
   prompt('calculate_again')
   answer = ''
-  loop do 
+  loop do
     answer = gets.chomp
     break if answer.downcase == 'y' || answer.downcase == 'n'
     prompt('invalid_y_n')
   end
   answer
-end 
+end
 
-
-#Main Code
+# Main Code
 prompt('welcome')
 
 loop do
   loan_amount = retrieve_loan_amount
   apr = retrieve_apr
-  years = retrieve_years 
+  years = retrieve_years
 
   monthly_payment = calculate_monthly_payment(loan_amount, apr, years)
   puts "Your monthly payment is $#{monthly_payment}!"
-  
+
   answer = retrieve_new_calc?
   break if answer == 'n'
-  system('clear') || system('cls') 
-end 
+  system('clear') || system('cls')
+end
 
 prompt('goodbye')
-
-
