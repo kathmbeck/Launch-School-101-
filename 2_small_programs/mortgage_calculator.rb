@@ -80,16 +80,24 @@ def calculate_monthly_payment(loan_amount, apr, years)
   loan_amount * (monthly_interest_rate / divisor).round(2)
 end
 
-def retrieve_new_calc?
+def valid_new_calc_answer?
+  answer.downcase == 'y' || answer.downcase == 'n'
+end 
+
+def retrieve_new_calc
   prompt('calculate_again')
   answer = ''
   loop do
     answer = gets.chomp
-    break if answer.downcase == 'y' || answer.downcase == 'n'
+    break if valid_new_calc_answer? 
     prompt('invalid_y_n')
   end
   answer
 end
+
+def play_again?(answer)
+  answer == 'y'
+end 
 
 # Main Code
 prompt('welcome')
@@ -102,8 +110,8 @@ loop do
   monthly_payment = calculate_monthly_payment(loan_amount, apr, years)
   puts "Your monthly payment is $#{monthly_payment}!"
 
-  answer = retrieve_new_calc?
-  break if answer == 'n'
+  answer = retrieve_new_calc
+  break unless play_again?(answer)
   system('clear') || system('cls')
 end
 
