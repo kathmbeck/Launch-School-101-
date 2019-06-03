@@ -15,7 +15,7 @@ def prompt(message)
 end
 
 def display_welcome
-  <<-MSG
+prompt <<-MSG
   Welecome to Rock Paper Scissors Lizard Spock.
   The first to win #{MATCH_WIN} games wins the match!
   ========================================
@@ -42,7 +42,7 @@ def valid_choice?(choice)
 end
 
 def display_invalid_choice
-  <<-MSG
+prompt <<-MSG
   That's not a valid choice.
   Enter the whole word or the following abbreviations:
   "#{VALID_ABBREVIATIONS.join(', ')}"
@@ -54,7 +54,7 @@ def retrieve_player_choice
   loop do
     prompt("Chose one: #{VALID_CHOICES.join(', ')}.")
     prompt("You may enter the first two letters.")
-    choice = gets.chomp
+    choice = gets.chomp.downcase
     if valid_choice?(choice)
       break
     else
@@ -95,7 +95,7 @@ def display_tally(wins)
   prompt("Player: #{wins[:player]} wins v. Computer: #{wins[:computer]} wins")
 end
 
-def player_continue?
+def player_continue_response
   loop do
     prompt('========================================')
     prompt("Press return to play the next round.")
@@ -112,12 +112,14 @@ def display_match_winner(wins)
   prompt('========================================')
   if wins[:player] == MATCH_WIN
     prompt("You won the match! You are the champion!")
+    prompt("You won  #{wins[:player]} to #{wins[:computer]}.")
   elsif wins[:computer] == MATCH_WIN
     prompt("The computer won the match. So sad, too bad.")
+    prompt("The computer won  #{wins[:computer]} to #{wins[:player]}.")
   end
 end
 
-def valid_answer?(answer)
+def valid_play_again_answer?(answer)
   VALID_ANSWERS.include?(answer)
 end
 
@@ -131,7 +133,7 @@ def retrieve_play_again
   prompt('Do you want to play again?')
   loop do
     answer = gets.chomp.downcase
-    if valid_answer?(answer)
+    if valid_play_again_answer?(answer)
       break
     else
       display_invalid_answer
@@ -139,6 +141,11 @@ def retrieve_play_again
   end
   answer
 end
+
+def play_again?(answer)
+  answer == 'no' || answer == 'n'
+end
+
 
 def display_goodbye
   prompt("Thanks for playing Rock Paper Scissors Lizard Spock! Goodbye!")
@@ -161,13 +168,14 @@ loop do
     display_tally(wins)
 
     break if game_over?(wins)
-    player_continue?
+    player_continue_response
     system('clear') || system('cls')
   end
 
   display_match_winner(wins)
 
-  break if retrieve_play_again == 'no' || retrieve_play_again == 'n'
+  play_again_answer = retrieve_play_again
+  break if play_again?(play_again_answer)
   system('clear') || system('cls')
 end
 
