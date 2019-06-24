@@ -7,7 +7,7 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
                 [[1, 5, 9], [3, 5, 7]]
 FIRST_MOVE = 'choose' # (options: 'choose', 'human', 'computer')
-VALID_CHOICES = %w(y n)
+VALID_ANSWERS = %w(y n)
 MATCH_WIN = 5
 BEST_INITIAL_SQUARE = 5
 
@@ -64,13 +64,13 @@ def choose_first_player
   loop do
     prompt "Do you want to go first? ('y' or 'n')"
     choice = gets.chomp.downcase
-    break if VALID_CHOICES.include?(choice)
+    break if VALID_ANSWERS.include?(choice)
     prompt "That is not a valid choice."
   end
   choice == 'y' ? 'human' : 'computer'
 end
 
-def set_currrent_player
+def set_current_player
   if FIRST_MOVE == 'choose'
     choose_first_player
   else
@@ -219,7 +219,7 @@ def ask_play_again
   loop do
     prompt "Play again? ('y' or 'n')"
     answer = gets.chomp.downcase
-    break if VALID_CHOICES.include?(answer)
+    break if VALID_ANSWERS.include?(answer)
     prompt "That is not a valid response."
   end
   answer
