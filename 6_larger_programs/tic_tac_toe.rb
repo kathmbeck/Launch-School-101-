@@ -59,7 +59,7 @@ def initialize_board
   end
 end
 
-def choose_first_player
+def ask_go_first
   choice = ''
   loop do
     prompt "Do you want to go first? ('y' or 'n')"
@@ -67,7 +67,11 @@ def choose_first_player
     break if VALID_ANSWERS.include?(choice)
     prompt "That is not a valid choice."
   end
-  choice == 'y' ? 'human' : 'computer'
+  choice
+end
+
+def choose_first_player
+  ask_go_first == 'y' ? 'human' : 'computer'
 end
 
 def set_current_player
@@ -193,12 +197,16 @@ def display_tally(wins)
   prompt "You: #{wins[:human]} win(s) v. Computer: #{wins[:computer]} win(s)"
 end
 
+require 'io/console'
+def continue_game
+  print "Press any key to continue."
+  STDIN.getch
+end
+
 def ask_human_player_continue
   loop do
     puts '========================================'
-    prompt "Press return to play the next round."
-    continue = gets
-    break if continue == "\n"
+    break if continue_game
   end
 end
 
@@ -225,6 +233,10 @@ def ask_play_again
   answer
 end
 
+def play_again?(answer)
+answer == 'y'
+end
+
 def display_goodbye_message
   prompt "Thanks for playing Tic Tac Toe! Goodbye!"
 end
@@ -234,6 +246,7 @@ end
 loop do
   display_welcome_message
   wins = { human: 0, computer: 0 }
+  choice = ''
   current_player = set_current_player
   loop do
     board = initialize_board
@@ -265,7 +278,7 @@ loop do
   end
 
   answer = ask_play_again
-  break unless answer == 'y'
+  break unless play_again?(answer)
   system('clear') || system('cls')
 end
 
