@@ -135,7 +135,8 @@ end
 
 def display_player_end_of_turn(p_total, p_cards)
   if busted?(p_total)
-    prompt "Oh no! You drew a #{p_cards[-1]} and busted with a total of #{p_total}! The dealer wins!"
+    prompt "You drew a #{p_cards[-1]} and busted with a total of #{p_total}!"
+    prompt "The dealer wins!"
   elsif p_total == BLACKJACK
     prompt "You have #{BLACKJACK}. Blackjack!"
   else
