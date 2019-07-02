@@ -90,7 +90,8 @@ def ace_correction(cards, total)
 end
 
 def display_initial_hands(p_cards, d_cards, p_total)
-  prompt "Dealer has: #{d_cards[0][:value]} of #{d_cards[0][:suit]} and unknown card."
+  prompt "Dealer has: #{d_cards[0][:value]} of #{d_cards[0][:suit]}" \
+         " and unknown card."
   prompt "You have: #{join_and(p_cards)}"
   prompt "Current total: #{p_total}"
   puts ''
@@ -137,7 +138,8 @@ end
 
 def display_player_end_of_turn(p_total, p_cards)
   if busted?(p_total)
-    prompt "You drew a #{p_cards[-1][:value]} of #{p_cards[-1][:suit]} and busted with a total of #{p_total}!"
+    prompt "You drew a #{p_cards[-1][:value]} of #{p_cards[-1][:suit]}" \
+           " and busted with a total of #{p_total}!"
     prompt "The dealer wins!"
   elsif p_total == BLACKJACK
     prompt "You have #{BLACKJACK}. Blackjack!"
@@ -160,7 +162,7 @@ def ask_player_continue
 end
 
 def join_and(current_cards)
-  output = current_cards.map { |card| ["#{card[:value]} of #{card[:suit]}"]}
+  output = current_cards.map { |card| ["#{card[:value]} of #{card[:suit]}"] }
   case current_cards.size
   when 2 then output.join(' and ')
   else
@@ -170,7 +172,7 @@ end
 
 def display_players_hand(p_cards, p_total)
   prompt "Your cards are:"
-  prompt "#{join_and(p_cards)}"
+  prompt join_and(p_cards).to_s
   prompt "Current total: #{p_total}"
 end
 
@@ -181,7 +183,7 @@ end
 
 def display_dealers_hand(d_cards)
   prompt "The dealer's cards are:"
-  prompt "#{join_and(d_cards)}"
+  prompt join_and(d_cards).to_s
 end
 
 def print_dealer_hit
