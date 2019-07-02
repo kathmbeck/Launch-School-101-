@@ -1,7 +1,7 @@
 require 'io/console'
 
 # CONSTANTS
-SUITS = ['H', 'D', 'C', 'S']
+SUITS = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
 VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10'] +
          ['Jack', 'Queen', 'King', 'Ace']
 FACE_CARDS = ['Jack', 'Queen', 'King']
@@ -46,11 +46,13 @@ def print_shuffle_cards
 end
 
 def initialize_full_deck
-  SUITS.product(VALUES).shuffle
-end
-
-def extract_card_values_only(deck)
-  deck.map { |card| card[1] }
+  deck = []
+  SUITS.each do |suit|
+    VALUES.each do |value|
+      deck << { suit: suit, value: value }
+    end
+  end
+  deck.shuffle
 end
 
 def deal_initial_hand!(cards)
@@ -68,11 +70,11 @@ end
 def hand_total(cards)
   total = 0
   cards.each do |card|
-    if valid_integer?(card)
-      total += card.to_i
-    elsif FACE_CARDS.include?(card)
+    if valid_integer?(card[:value])
+      total += card[:value].to_i
+    elsif FACE_CARDS.include?(card[:value])
       total += 10
-    elsif card == 'Ace'
+    elsif card[:value] == 'Ace'
       total += 11
     end
     total
@@ -81,14 +83,14 @@ def hand_total(cards)
 end
 
 def ace_correction(cards, total)
-  cards.select { |card| card == 'Ace' }.count.times do
+  cards.select { |card| card[:value] == 'Ace' }.count.times do
     total -= 10 if total > BLACKJACK
   end
   total
 end
 
 def display_initial_hands(p_cards, d_cards, p_total)
-  prompt "Dealer has: #{d_cards[0]} and unknown card."
+  prompt "Dealer has: #{d_cards[0][:value]} of #{d_cards[0][:suit]} and unknown card."
   prompt "You have: #{join_and(p_cards)}"
   prompt "Current total: #{p_total}"
   puts ''
@@ -101,10 +103,10 @@ end
 def ask_hit_or_stay
   answer = ''
   loop do
-    puts "Would you like to 'hit' or 'stay'?"
+    puts "Would you like to hit or stay (h/s)?"
     answer = gets.chomp.downcase
     break if VALID_HIT.include?(answer) || VALID_STAY.include?(answer)
-    puts "That is not a valid play. You must enter 'hit' or 'stay'."
+    puts "That is not a valid play. You must enter hit (h) or stay (s)."
   end
   answer
 end
@@ -135,7 +137,7 @@ end
 
 def display_player_end_of_turn(p_total, p_cards)
   if busted?(p_total)
-    prompt "You drew a #{p_cards[-1]} and busted with a total of #{p_total}!"
+    prompt "You drew a #{p_cards[-1][:value]} of #{p_cards[-1][:suit]} and busted with a total of #{p_total}!"
     prompt "The dealer wins!"
   elsif p_total == BLACKJACK
     prompt "You have #{BLACKJACK}. Blackjack!"
@@ -158,15 +160,17 @@ def ask_player_continue
 end
 
 def join_and(current_cards)
+  output = current_cards.map { |card| ["#{card[:value]} of #{card[:suit]}"]}
   case current_cards.size
-  when 2 then current_cards.join(' and ')
+  when 2 then output.join(' and ')
   else
-    current_cards[0..-2].join(', ').to_s + ", and #{current_cards[-1]}."
+    output[0..-2].join(', ').to_s + ", and #{output[-1][0]}"
   end
 end
 
 def display_players_hand(p_cards, p_total)
-  prompt "Your cards are: #{join_and(p_cards)}"
+  prompt "Your cards are:"
+  prompt "#{join_and(p_cards)}"
   prompt "Current total: #{p_total}"
 end
 
@@ -176,7 +180,8 @@ def print_dealer_start
 end
 
 def display_dealers_hand(d_cards)
-  prompt "The dealer's cards are: #{join_and(d_cards)}"
+  prompt "The dealer's cards are:"
+  prompt "#{join_and(d_cards)}"
 end
 
 def print_dealer_hit
@@ -296,8 +301,7 @@ loop do
   loop do
     display_wins(wins)
     print_shuffle_cards
-    deck = initialize_full_deck
-    cards = extract_card_values_only(deck)
+    cards = initialize_full_deck
 
     dealer_cards = deal_initial_hand!(cards)
     dealer_total = hand_total(dealer_cards)
